@@ -1,0 +1,35 @@
+image:
+  repository: redis:alpine
+  tag: ""
+
+service:
+  type: ClusterIP
+  port: 6379
+  targetport: 6379
+
+container: 
+  name: redis
+  containerport: 6379
+
+  extraEnv:
+    - name: PORT
+      value: "50051"
+
+  resources:
+    requests:
+      cpu: 70m
+      memory: 200Mi
+    limits:
+      cpu: 256Mi
+      memory: 125m
+
+rlp:
+  port: 6379
+  
+vol:
+  volume: 
+  - name: redis-data
+    emptyDir: {}
+  vmnts:
+  - mountPath: /data
+    name: redis-data
