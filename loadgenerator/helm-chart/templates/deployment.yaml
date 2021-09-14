@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
+      initContainers:
+      - command:
+        - /bin/sh
+        - -exc
+        - |
+          echo "Init container pinging frontend: ${FRONTEND_ADDR}..."
+          STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+          if test $STATUSCODE -ne 200; then
+              echo "Error: Could not reach frontend - Status code: ${STATUSCODE}"
+              exit 1
+          fi
+        name: {{ .Values.ic.name }}
+        image: {{ .Values.image.repository }}
+        env: {{- with .Values.ic.extraEnv }}{{ toYaml . | nindent 8 }}{{- end }}
+      containers:
+      - name: {{ .Values.container.name }}
+        image: {{ .Values.container.image }}
+        env: {{- with .Values.container.extraEnv }}{{ toYaml . | nindent 8 }}{{- end }}
+        resources: {{ toYaml .Values.container.resources | nindent 12 }}
+          

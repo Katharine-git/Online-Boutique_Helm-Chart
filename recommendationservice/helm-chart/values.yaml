@@ -1,0 +1,28 @@
+image:
+  repository: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.4
+  tag: ""
+
+service:
+  name: grpc
+  type: ClusterIP
+  port: 8080
+  targetport: 8080
+
+container: 
+  name: server
+  containerport: 8080
+
+  extraEnv:
+    - name: PORT
+      value: "8080"
+    - name: PRODUCT_CATALOG_SERVICE_ADDR
+      value: "productcatalogservice:3550"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 220Mi
+    limits:
+      cpu: 200m
+      memory: 450Mi
+ 

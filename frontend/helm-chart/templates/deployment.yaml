@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.image.repository }}
+          ports:
+          - containerPort: {{ .Values.container.containerPort }}
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: {{ .Values.container.prefixUrl | quote }}
+              port: {{ .Values.service.targetport }}
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: {{ .Values.container.prefixUrl | quote }}
+              port: {{ .Values.service.targetport }}
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
+          env: {{- with .Values.container.extraEnv }}{{ toYaml . | nindent 10 }}{{- end }}
+            
+          resources: {{ toYaml .Values.container.resources | nindent 12 }}
+            

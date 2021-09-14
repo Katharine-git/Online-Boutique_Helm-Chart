@@ -1,0 +1,33 @@
+image:
+  repository: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.4
+  tag: ""
+
+service:
+  name: grpc
+  type: ClusterIP
+  port: 7070
+  targetport: 7070
+
+account:
+  servicename: default
+  terminationperiod: 5
+  
+container: 
+  name: server
+  containerport: 7070
+
+  extraEnv:
+    - name: REDIS_ADDR
+      value: "redis-cart:6379"
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 64Mi
+    limits:
+      cpu: 300m
+      memory: 128Mi
+
+rlp:
+  initialDelaySeconds: 15
+  periodSeconds: 10

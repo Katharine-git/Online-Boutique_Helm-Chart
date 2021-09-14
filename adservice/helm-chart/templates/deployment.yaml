@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adservice
+spec:
+  selector:
+    matchLabels:
+      app: adservice
+  template:
+    metadata:
+      labels:
+        app: adservice
+    spec:
+      serviceAccountName: {{ .Values.account.servicename }}
+      terminationGracePeriodSeconds: {{ .Values.account.terminationperiod }}
+      containers:
+      - name: {{ .Values.container.name }}
+        image: {{ .Values.image.repository }}
+        ports:
+        - containerPort: {{ .Values.container.containerport }}
+        env: {{- with .Values.container.extraEnv }}{{ toYaml . | nindent 8 }}{{- end }}
+        # - name: DISABLE_STATS
+        #   value: "1"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        # - name: JAEGER_SERVICE_ADDR
+        #   value: "jaeger-collector:14268"
+        resources: {{- with .Values.container.resources }}{{ toYaml . | nindent 10 }}{{- end }}
+        readinessProbe:
+          initialDelaySeconds: {{ .Values.rlp.initialDelaySeconds}}
+          periodSeconds: {{ .Values.rlp.periodSeconds }}
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]
+        livenessProbe:
+          initialDelaySeconds: {{ .Values.rlp.initialDelaySeconds}}
+          periodSeconds: {{ .Values.rlp.periodSeconds }}
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]

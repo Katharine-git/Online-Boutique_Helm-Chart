@@ -1,0 +1,31 @@
+replicaCount: 1
+
+image:
+  repository: gcr.io/google-samples/microservices-demo/paymentservice:v0.2.4
+  tag: ""
+
+service:
+  name: grpc
+  type: ClusterIP
+  port: 50051
+  targetport: 50051
+
+container: 
+  name: server
+  containerPort: 50051
+  
+  extraEnv:
+    - name: PORT
+      value: "50051"
+
+  resources: 
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    
+
+  
+  

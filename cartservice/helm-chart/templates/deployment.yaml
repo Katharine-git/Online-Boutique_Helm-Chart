@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cartservice
+spec:
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      serviceAccountName: {{ .Values.account.servicename }}
+      terminationGracePeriodSeconds: {{ .Values.account.terminationperiod }}
+      containers:
+      - name: {{ .Values.container.name }}
+        image: {{ .Values.image.repository }}
+        ports:
+        - containerPort: {{ .Values.container.containerport }}
+        env: {{- with .Values.container.extraEnv }}{{ toYaml . | nindent 8 }}{{- end }}
+        resources: {{- with .Values.container.resources }}{{ toYaml . | nindent 10 }}{{- end }}
+        readinessProbe:
+          initialDelaySeconds: {{ .Values.rlp.initialDelaySeconds }}
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+        livenessProbe:
+          initialDelaySeconds: {{ .Values.rlp.initialDelaySeconds }}
+          periodSeconds: {{ .Values.rlp.periodSeconds}}
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
