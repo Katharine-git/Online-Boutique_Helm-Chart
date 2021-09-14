@@ -1,5 +1,5 @@
 image:
-  repository: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.4
+  repository: gcr.io/google-samples/microservices-demo/cartservice:v0.2.4
   tag: ""
 
 service:
