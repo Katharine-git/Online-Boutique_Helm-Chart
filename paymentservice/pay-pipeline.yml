@@ -9,8 +9,11 @@ variables:
 
 steps:
 - script: |
+    paymentservice
     docker build -f Dockerfile -t $(imageName-8) .
     docker tag $(imageName-8) $(myregistry).azurecr.io/$(img-nm-tg-8):$(tag)
+    az login
+    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-8):$(tag)
 
 - task: PublishTestResults@2
