@@ -9,13 +9,14 @@ variables:
 
 steps:
 - script: |
-    cd adservice
-    docker build -f Dockerfile -t $(imageName-3) .
+    npm install
+    npm test
+    docker build -t $(imageName-3) .
     docker tag $(imageName-3) $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
     az login
     az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
-
+   
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:

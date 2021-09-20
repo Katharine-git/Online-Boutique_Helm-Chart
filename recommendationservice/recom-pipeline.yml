@@ -9,7 +9,6 @@ variables:
 
 steps:
 - script: |
-    cd adservice
     docker build -f Dockerfile -t $(imageName-10) .
     docker tag $(imageName-10) $(myregistry).azurecr.io/$(img-nm-tg-10):$(tag)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-10):$(tag)

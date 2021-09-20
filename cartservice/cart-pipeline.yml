@@ -19,7 +19,7 @@ steps:
   condition: succeededOrFailed()
   inputs:
     testResultsFiles: '**/TEST-RESULTS.xml'
-    testRunTitle: 'Test results for JavaScript'
+    testRunTitle: 'Test results for Script'
 
 - task: PublishCodeCoverageResults@1
   inputs: 
