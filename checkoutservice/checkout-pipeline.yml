@@ -9,12 +9,9 @@ variables:
 
 steps:
 - script: |
-    npm install
-    npm test
+    cd checkoutservice
     docker build -t $(imageName-3) .
     docker tag $(imageName-3) $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
-    az login
-    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
    
 - task: PublishTestResults@2
