@@ -1,0 +1,34 @@
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  imageName-1: 'adservice'
+  myregistry: 'dagile'
+  img-nm-tg-1: 'adservice'
+  tag: 'latest'
+
+steps:
+- script: |
+    cd adservice
+    npm install
+    npm test
+    docker build -f Dockerfile -t $(imageName-1) .
+    docker tag $(imageName-1) $(myregistry).azurecr.io/$(img-nm-tg-1)
+    az login
+    az acr login --name $(myregistry)
+    docker push $(myregistry).azurecr.io/$(img-nm-tg-1):$(tag)
+#  env:
+#    pswd: $(dockerPassword)
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '**/TEST-RESULTS.xml'
+    testRunTitle: 'Test results for JavaScript'
+
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
