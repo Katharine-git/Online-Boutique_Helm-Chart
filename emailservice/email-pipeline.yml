@@ -1,0 +1,27 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  imageName-5: 'emailservice'
+  img-nm-tg-5: 'emailservice'
+  myregistry: 'dagile'
+  tag: 'latest'
+
+steps:
+- script: |
+    cd adservice
+    docker build -f Dockerfile -t $(imageName-5) .
+    docker tag $(imageName-5) $(myregistry).azurecr.io/$(img-nm-tg-5):$(tag)
+    docker push $(myregistry).azurecr.io/$(img-nm-tg-5):$(tag)
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '**/TEST-RESULTS.xml'
+    testRunTitle: 'Test results for JavaScript'
+
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
