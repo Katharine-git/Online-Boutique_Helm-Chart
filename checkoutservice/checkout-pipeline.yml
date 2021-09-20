@@ -9,10 +9,12 @@ variables:
 
 steps:
 - script: |
+    npm install
+    npm test
     docker build -t $(imageName-3) .
     docker tag $(imageName-3) $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
+    docker push $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
    
-
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:
