@@ -5,7 +5,7 @@ trigger:
 stages:
 - stage: build
   jobs:
-  - job: Build Docker Image
+  - job: Build_Docker_Image
     pool:
       vmImage: 'Ubuntu 16.04'
   
@@ -19,7 +19,7 @@ stages:
 
 - stage: deploy
   jobs:
-  - job: deploy helm-chart
+  - job: deploy_helm_chart
     pool:
       vmImage: 'Ubuntu 16.04'
   
