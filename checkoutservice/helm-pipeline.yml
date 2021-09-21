@@ -25,7 +25,7 @@ stages:
   
     steps:
     - script: |
-        cd adservice
+        cd checkoutservice 
         az login
         az aks get-credentials --resource-group Training-rg --name dagile
         helm install checkoutservice ./helm-chart -n deployment
