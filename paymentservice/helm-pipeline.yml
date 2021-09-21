@@ -10,13 +10,13 @@ stages:
       vmImage: 'Ubuntu 16.04'
   
     variables:
-      imageName-1: 'adservice'
+      imageName-1: 'paymentservice'
 
     steps:
     - script: |
-        cd adservice 
+        cd paymentservice
         docker build -f Dockerfile -t $(imageName-1) .
-
+        
 - stage: deploy
   jobs:
   - job: deploy_helm_chart
@@ -25,13 +25,8 @@ stages:
   
     steps:
     - script: |
-        cd adservice
+        cd paymentservice
         az login
         az aks get-credentials --resource-group Training-rg --name dagile
-        kubectl create namespace adservice
-        helm install adservices ./helm-chart -n adservice
-
-
-  
-
-
+        kubectl create namespace paymentservice
+        helm install paymentservice ./helm-chart -n paymentservice
