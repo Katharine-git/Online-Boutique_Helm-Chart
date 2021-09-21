@@ -24,7 +24,8 @@ stages:
       vmImage: 'Ubuntu 16.04'
   
     steps:
-    - script: 
+    - script: |
+        cd adservice
         helm install adservice ./helm-chart -n deployment
 
 
