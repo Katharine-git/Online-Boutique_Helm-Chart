@@ -28,7 +28,7 @@ stages:
         cd adservice
         az login
         az aks get-credentials --resource-group Training-rg --name dagile
-        helm install adservice ./helm-chart -n deployment
+        helm install adservice ./helm-chart 
 
 
   
