@@ -26,6 +26,7 @@ stages:
     steps:
     - script: |
         cd adservice
+        az login
         helm install adservice ./helm-chart -n deployment
 
 
