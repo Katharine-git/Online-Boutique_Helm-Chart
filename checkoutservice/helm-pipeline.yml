@@ -10,11 +10,11 @@ stages:
       vmImage: 'Ubuntu 16.04'
   
     variables:
-      imageName-1: 'adservice'
+      imageName-1: 'checkoutservice'
 
     steps:
     - script: |
-        cd adservice 
+        cd checkoutservice 
         docker build -f Dockerfile -t $(imageName-1) .
         
 - stage: deploy
@@ -28,10 +28,4 @@ stages:
         cd adservice
         az login
         az aks get-credentials --resource-group Training-rg --name dagile
-        kubectl create namespace deployment
-        helm install adservices ./helm-chart -n deployment
-
-
-  
-
-
+        helm install checkoutservice ./helm-chart -n deployment
