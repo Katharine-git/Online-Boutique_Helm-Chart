@@ -1,4 +1,4 @@
-
+#Pipeline to build the respective image and push to ACR.
 pool:
   vmImage: 'Ubuntu 16.04'
   

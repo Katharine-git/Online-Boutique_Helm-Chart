@@ -1,0 +1,33 @@
+#Pipeline to depoly helm-chart of the respective MS when the respective image is build
+trigger:
+- master
+
+stages:
+- stage: build
+  jobs:
+  - job: Build Docker Image
+    pool:
+      vmImage: 'Ubuntu 16.04'
+  
+    variables:
+      imageName-1: 'adservice'
+
+    steps:
+    - script: |
+        cd adservice 
+        docker build -f Dockerfile -t $(imageName-1) .
+
+- stage: deploy
+  jobs:
+  - job: deploy helm-chart
+    pool:
+      vmImage: 'Ubuntu 16.04'
+  
+    steps:
+    - script: 
+        helm install adservice ./helm-chart -n deployment
+
+
+  
+
+
