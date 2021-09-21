@@ -29,7 +29,7 @@ stages:
         az login
         az aks get-credentials --resource-group Training-rg --name dagile
         kubectl create namespace deployment
-        helm install Adservice ./helm-chart -n deployment
+        helm install adservices ./helm-chart -n deployment
 
 
   
