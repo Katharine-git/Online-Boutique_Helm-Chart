@@ -10,8 +10,6 @@ variables:
 steps:
 - script: |
     cd currencyservice
-    npm install
-    npm test
     docker build -f Dockerfile -t $(imageName-4) .
     docker tag $(imageName-4) $(myregistry).azurecr.io/$(img-nm-tg-4):$(tag)
     az login

@@ -9,8 +9,11 @@ variables:
 
 steps:
 - script: |
+    cd loadgenerator
     docker build -f Dockerfile -t $(imageName-7) .
     docker tag $(imageName-7) $(myregistry).azurecr.io/$(img-nm-tg-7):$(tag)
+    az login
+    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-7):$(tag)
 
 - task: PublishTestResults@2

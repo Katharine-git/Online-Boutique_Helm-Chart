@@ -9,8 +9,11 @@ variables:
 
 steps:
 - script: |
+    cd shippingservice
     docker build -f Dockerfile -t $(imageName-12) .
     docker tag $(imageName-12) $(myregistry).azurecr.io/$(img-nm-tg-12):$(tag)
+    az login
+    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-12):$(tag)
 
 - task: PublishTestResults@2

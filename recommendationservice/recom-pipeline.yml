@@ -9,8 +9,11 @@ variables:
 
 steps:
 - script: |
+    cd recommendationservice
     docker build -f Dockerfile -t $(imageName-10) .
     docker tag $(imageName-10) $(myregistry).azurecr.io/$(img-nm-tg-10):$(tag)
+    az login
+    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-10):$(tag)
 
 - task: PublishTestResults@2

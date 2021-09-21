@@ -9,8 +9,11 @@ variables:
 
 steps:
 - script: |
+    cd productcatalogservice
     docker build -f Dockerfile -t $(imageName-9) .
     docker tag $(imageName-9) $(myregistry).azurecr.io/$(img-nm-tg-9):$(tag)
+    az login
+    az acr login --name $(myregistry)
     docker push $(myregistry).azurecr.io/$(img-nm-tg-9):$(tag)
 
 - task: PublishTestResults@2
