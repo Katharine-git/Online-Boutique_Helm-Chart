@@ -2,13 +2,14 @@
 trigger:
 - master
 
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
 stages:
 - stage: build
   jobs:
   - job: Build_Docker_Image
-    pool:
-      vmImage: 'Ubuntu 16.04'
-  
+    
     variables:
       imageName-1: 'adservice'
 
@@ -20,9 +21,7 @@ stages:
         
 - stage: list 
   jobs:
-  - job: list_docker_image
-    pool:
-      vmImage: 'Ubuntu 16.04'   
+  - job: list_docker_image 
        
     steps:
     - script: |
@@ -31,8 +30,6 @@ stages:
 - stage: scan 
   jobs:
   - job: scan_docker_image
-    pool:
-      vmImage: 'Ubuntu 16.04'
   
     steps:
     - script: |
@@ -49,8 +46,6 @@ stages:
 - stage: deploy
   jobs:
   - job: deploy_helm_chart
-    pool:
-      vmImage: 'Ubuntu 16.04'
   
     steps:
     - script: |
