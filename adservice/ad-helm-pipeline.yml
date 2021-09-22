@@ -21,7 +21,8 @@ stages:
    jobs:
    - job: list_docker_image
      pool:
-       vmImage: 'Ubuntu 16.04'    
+       vmImage: 'Ubuntu 16.04'   
+       
      steps:
      - script: |
          docker images
