@@ -30,7 +30,7 @@ stages:
     - task: Anchore@0
       inputs:
         image: 'adservice'
-        dockerfile: 'Dockerfile'
+   #     dockerfile: 'Dockerfile'
         failBuild: true
 
 - stage: deploy
