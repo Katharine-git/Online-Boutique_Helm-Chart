@@ -27,16 +27,16 @@ stages:
   - job: list_docker_image 
        
     steps:
-    - script: 
-        - docker images
+    - script: |
+        docker images
 
 - stage: scan 
   jobs:
   - job: scan_docker_image
   
     steps:
-    - script: 
-        - docker scan "${dockerid}"/"${imageName-3}":"${tag}"
+    - script: |
+         docker scan "${dockerid}"/"${imageName-3}":"${tag}"
 #        cd checkoutservice
 #        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
 #        bash -s -- -f -r $(img-nm-tg-3):$(tag)
