@@ -19,7 +19,7 @@ stages:
 
 - stage: scan 
   jobs:
-  - job: scan docker image
+  - job: scan_docker_image
     pool:
       vmImage: 'Ubuntu 16.04'
   
