@@ -15,7 +15,7 @@ stages:
 
     steps:
     - script: |
-        cd adservice
+        cd checkoutservice
         docker login -u "${dockerid}" -p "${dockerpswd}"
         docker build -t test .
         
