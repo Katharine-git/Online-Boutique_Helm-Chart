@@ -17,7 +17,7 @@ stages:
     - script: |
         cd adservice
         docker login -u "${dockerid}" -p "${dockerpswd}"
-        docker build -t test .
+        docker build -t "${imageName-1}" .
         
 - stage: list 
   jobs:
@@ -39,7 +39,7 @@ stages:
         
     - task: Anchore@0
       inputs:
-        image: 'adservice'
+        image: "${imageName-1}"
         dockerfile: adservice/Dockerfile
         failBuild: true
 
