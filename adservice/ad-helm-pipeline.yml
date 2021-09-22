@@ -17,6 +17,16 @@ stages:
         cd adservice 
         docker build -f Dockerfile -t $(imageName-1) .
 
+- stage: scan 
+  jobs:
+  - job: scan docker image
+    pool:
+      vmImage: 'Ubuntu 16.04'
+  
+    steps:
+    - script: 
+        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 | bash -s -- -f -d Dockerfile -b .anchore-policy.json $(imageName-1)
+
 - stage: deploy
   jobs:
   - job: deploy_helm_chart
