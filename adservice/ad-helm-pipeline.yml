@@ -18,13 +18,13 @@ stages:
         docker build -f Dockerfile -t localbuild/$(imageName-1) .
         
  - stage: list 
-  jobs:
-  - job: list_docker_image
-    pool:
-      vmImage: 'Ubuntu 16.04'    
-    steps:
-    - script: |
-        docker images
+   jobs:
+   - job: list_docker_image
+     pool:
+       vmImage: 'Ubuntu 16.04'    
+     steps:
+     - script: |
+         docker images
 
 - stage: scan 
   jobs:
