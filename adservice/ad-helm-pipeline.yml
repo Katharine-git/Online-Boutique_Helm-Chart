@@ -14,7 +14,8 @@ stages:
 
     steps:
     - script: |
-        cd adservice 
+        cd adservice
+        docker login -u "${dockerid}" -p "${dockerpswd}"
         docker build -t adservice .
         
 - stage: list 
