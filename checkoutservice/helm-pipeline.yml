@@ -4,20 +4,24 @@ trigger:
 
 pool:
   vmImage: 'Ubuntu 16.04'
-  
+
+variables:
+  imageName-3: 'checkoutservice'
+  img-nm-tg-3: 'checkoutservice'
+  myregistry: 'dagile'
+  tag: 'latest'
+
 stages:
-- stage: build
+- stage: pull
   jobs:
-  - job: Build_Docker_Image
-    
-    variables:
-      imageName-1: 'test'
+  - job: pull_docker_image_from_acr
 
     steps:
     - script: |
         cd checkoutservice
-        docker login -u "${dockerid}" -p "${dockerpswd}"
-        docker build -t cout .
+        az login
+        az acr login --name $(myregistry)
+        docker pull $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
         
 - stage: list 
   jobs:
@@ -26,3 +30,19 @@ stages:
     steps:
     - script: |
         docker images
+
+- stage: scan 
+  jobs:
+  - job: scan_docker_image
+  
+    steps:
+    - script: |
+        cd checkoutservice
+        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
+        bash -s -- -f -r $(img-nm-tg-3):$(tag)
+        
+#    - task: Anchore@0
+#      inputs:
+#        image: "${imageName-3}"
+#        dockerfile: adservice/Dockerfile
+#        failBuild: true
