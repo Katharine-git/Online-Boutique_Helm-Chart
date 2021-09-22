@@ -17,7 +17,7 @@ stages:
         cd adservice
         docker login -u "${dockerid}" -p "${dockerpswd}"
         docker build -t "${imageName-1}" .
-        docker run "${imageName-1}"
+        docker run -it -d "${imageName-1}"
         
 - stage: list 
   jobs:
