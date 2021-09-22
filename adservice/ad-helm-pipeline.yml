@@ -16,7 +16,7 @@ stages:
     - script: |
         cd adservice 
         docker build -f Dockerfile -t $(imageName-1) .
-        docker login -u $(DOCKERID) -p ${env:DOCKERPSWD}
+        docker login -u $(dockerid) -p $pswd
 
 - stage: scan 
   jobs:
