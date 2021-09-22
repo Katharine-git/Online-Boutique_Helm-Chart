@@ -27,7 +27,12 @@ stages:
     steps:
     - script: |
         cd adservice
-        docker scan adservice
+        
+    - task: Anchore@0
+      inputs:
+        image: 'localbuild/imagename:tag'
+        dockerfile: 'Dockerfile'
+        failBuild: true
 
 - stage: deploy
   jobs:
