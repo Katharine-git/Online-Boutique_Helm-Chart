@@ -16,6 +16,9 @@ stages:
     - script: |
         cd adservice 
         docker build -f Dockerfile -t localbuild/$(imageName-1) .
+        
+    - script: |
+        docker images
 
 - stage: scan 
   jobs:
@@ -23,17 +26,17 @@ stages:
     pool:
       vmImage: 'Ubuntu 16.04'
   
-    steps:
-    - script: |
-        cd adservice
-        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
-        bash -s -- -f -d Dockerfile adservice
+#    steps:
+#    - script: |
+#        cd adservice
+#        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
+#        bash -s -- -f -d Dockerfile adservice
         
-#    - task: Anchore@0
-#      inputs:
-#        image: 'localbuild/adservice'
-#        dockerfile: adservice/Dockerfile
-#        failBuild: true
+    - task: Anchore@0
+      inputs:
+        image: 'adservice'
+        dockerfile: adservice/Dockerfile
+        failBuild: true
 
 - stage: deploy
   jobs:
