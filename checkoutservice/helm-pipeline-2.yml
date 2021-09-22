@@ -1,0 +1,47 @@
+#Pipeline to depoly helm-chart of the respective MS when the respective image is build
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  imageName-3: 'checkoutservice'
+  tag: 'latest'
+
+stages:
+- stage: build_and_push
+  jobs:
+  - job: build_and_pull_docker_image_from_dockerhub
+
+    steps:
+    - script: |
+        docker build -t "${imageName-3}" .
+        docker login -u "${dockerid}" -p "${dockerpswd}"
+        docker tag "${imageName-3}" "${dockerid}"/"${imageName-3}":"${tag}"
+        docker push "${dockerid}"/"${imageName-3}":"${tag}"
+        
+- stage: list 
+  jobs:
+  - job: list_docker_image 
+       
+    steps:
+    - script: 
+        - docker images
+
+- stage: scan 
+  jobs:
+  - job: scan_docker_image
+  
+    steps:
+    - script: 
+        - docker scan "${dockerid}"/"${imageName-3}":"${tag}"
+#        cd checkoutservice
+#        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
+#        bash -s -- -f -r $(img-nm-tg-3):$(tag)
+        
+#    - task: Anchore@0
+#      inputs:
+#        image: "${imageName-3}"
+#        dockerfile: adservice/Dockerfile
+#        failBuild: true
