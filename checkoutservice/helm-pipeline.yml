@@ -7,39 +7,39 @@ pool:
 
 variables:
   imageName-3: 'checkoutservice'
-  img-nm-tg-3: 'checkoutservice'
-  myregistry: 'dagile'
   tag: 'latest'
 
 stages:
-- stage: pull
+- stage: build_and_push
   jobs:
-  - job: pull_docker_image_from_acr
+  - job: build_and_pull_docker_image_from_dockerhub
 
     steps:
     - script: |
         cd checkoutservice
-        az login
-        az acr login --name $(myregistry)
-        docker pull $(myregistry).azurecr.io/$(img-nm-tg-3):$(tag)
+        docker build -t "${imageName-3}" .
+        docker login -u "${dockerid}" -p "${dockerpswd}"
+        docker tag "${imageName-3}" "${dockerid}"/"${imageName-3}":"${tag}"
+        docker push "${dockerid}"/"${imageName-3}":"${tag}"
         
 - stage: list 
   jobs:
   - job: list_docker_image 
        
     steps:
-    - script: |
-        docker images
+    - script: 
+        - docker images
 
 - stage: scan 
   jobs:
   - job: scan_docker_image
   
     steps:
-    - script: |
-        cd checkoutservice
-        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
-        bash -s -- -f -r $(img-nm-tg-3):$(tag)
+    - script: 
+        - docker scan "${dockerid}"/"${imageName-3}":"${tag}"
+#        cd checkoutservice
+#        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
+#        bash -s -- -f -r $(img-nm-tg-3):$(tag)
         
 #    - task: Anchore@0
 #      inputs:
