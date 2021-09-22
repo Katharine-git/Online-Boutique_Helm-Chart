@@ -15,7 +15,7 @@ stages:
     steps:
     - script: |
         cd adservice 
-        docker build -f Dockerfile -t localbuild/$(imageName-1) .
+        docker build -t adservice .
         
 - stage: list 
   jobs:
