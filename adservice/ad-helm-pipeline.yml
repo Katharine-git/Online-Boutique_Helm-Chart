@@ -16,7 +16,6 @@ stages:
     - script: |
         cd adservice 
         docker build -f Dockerfile -t $(imageName-1) .
-        docker login -u $(dockerid) -p $pswd
 
 - stage: scan 
   jobs:
@@ -30,7 +29,7 @@ stages:
         
     - task: Anchore@0
       inputs:
-        image: 'localbuild/imagename:tag'
+        image: 'adservice'
         dockerfile: 'Dockerfile'
         failBuild: true
 
