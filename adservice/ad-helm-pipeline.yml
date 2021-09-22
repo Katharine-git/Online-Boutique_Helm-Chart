@@ -32,7 +32,7 @@ stages:
     - task: Anchore@0
       inputs:
         image: 'localbuild/adservice'
-        dockerfile: Dockerfile
+        dockerfile: adservice/Dockerfile
         failBuild: true
 
 - stage: deploy
