@@ -16,6 +16,7 @@ stages:
 
     steps:
     - script: |
+        cd checkoutservice
         docker build -t "${imageName-3}" .
         docker login -u "${dockerid}" -p "${dockerpswd}"
         docker tag "${imageName-3}" "${dockerid}"/"${imageName-3}":"${tag}"
