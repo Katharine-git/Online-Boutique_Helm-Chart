@@ -1,22 +1,20 @@
 #Pipeline to depoly helm-chart of the respective MS when the respective image is build
 trigger:
 - master
-
-pool:
-  vmImage: 'Ubuntu 16.04'
+- dev
 
 variables:
   image_name: "localbuild/checkoutservice"
-  tag: "latest"
+  tag: "ci"
 
 stages:
-- stage: build_and_push
+- stage: build_and_scan
   jobs:
-  - job: build_docker_image
+  - job: build_and_scan
 
     steps:
-    - script: |
-        cd checkoutservice
+#    - script: |
+#        cd checkoutservice
         
     - task: Docker@2
       inputs:
@@ -24,23 +22,10 @@ stages:
         repository: "$(image_name)"
         tags: "$(tag)"
 
-- stage: list 
-  jobs:
-  - job: list_docker_image 
-       
-    steps:
-    - script: |
-        docker images
-
-- stage: scan 
-  jobs:
-  - job: scan_docker_image
-
-    steps:
     - task: Anchore@0
       inputs:
         image: "$(image_name):$(tag)"
-        dockerfile: checkoutservice/Dockerfile
+        dockerfile: Dockerfile
         
     - script: |
         echo $(billOfMaterials)
