@@ -34,15 +34,6 @@ stages:
 - stage: scan 
   jobs:
   - job: scan_docker_image
-  
-    steps:
-    - task: CmdLine@2
-      displayName: Scan
-      inputs:
-        script: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageName-3):$(tag)
-         
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageName-3):$(tag)
 
 #    - script: |
 #        cd checkoutservice
@@ -52,8 +43,8 @@ stages:
 #        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
 #        bash -s -- -f -r $(img-nm-tg-3):$(tag)
         
-#    - task: Anchore@0
-#      inputs:
-#        image: "${imageName-3}"
-#        dockerfile: adservice/Dockerfile
-#        failBuild: true
+  - task: Anchore@0
+    inputs:
+      image: "${imageName-3}"
+      dockerfile: checkoutservice/Dockerfile
+      failBuild: true
