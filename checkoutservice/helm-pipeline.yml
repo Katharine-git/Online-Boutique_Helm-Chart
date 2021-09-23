@@ -37,7 +37,7 @@ stages:
     - script: |
         cd checkoutservice
         curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 
-        bash -s -- -f -r -p katharinechristine/online_boutique:latest
+        bash -s -- -f -r -p online_boutique:latest
 
     
 
