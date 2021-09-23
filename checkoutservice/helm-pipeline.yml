@@ -15,7 +15,7 @@ variables:
 stages:
 - stage: build_and_push
   jobs:
-  - job: build_and_pull_docker_image_from_dockerhub
+  - job: build_docker_image
 
     steps:
     - script: |
@@ -46,11 +46,9 @@ stages:
     - task: Anchore@0
       inputs:
         image: "$(image_name):$(tag)"
-        customPolicyPath: ".anchore/policy.json"
         dockerfile: Dockerfile
         
     - script: |
-        echo $(policyStatus)
         echo $(billOfMaterials)
         cat $(billOfMaterials)
         echo $(vulnerabilities)
