@@ -6,11 +6,8 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
-  image_name: 'checkoutservice'
-  containerRegistry: 'dagile.azurecr.io'
-  myregistry: 'dagile'
-  tag: 'latest'
-  repo: 'online_boutique'
+  image_name: "localbuild/checkoutservice"
+  tag: "latest"
 
 stages:
 - stage: build_and_push
