@@ -7,6 +7,7 @@ pool:
 
 variables:
   imageName-3: 'checkoutservice'
+  imageTagName-3: 'checkout'
   tag: 'latest'
 
 stages:
@@ -19,9 +20,9 @@ stages:
         cd checkoutservice
         docker build -t "${imageName-3}" .
         docker login -u "${dockerid}" -p "${dockerpswd}"
-        docker tag "${imageName-3}" "${dockerid}"/"${imageName-3}":"${tag}"
-        docker push "${dockerid}"/"${imageName-3}":"${tag}"
-        
+        docker tag "${imageName-3}" "${dockerid}"/"${imageTagName-3}":"${tag}"
+        docker push "${dockerid}"/"${imageTagName-3}":"${tag}"
+
 - stage: list 
   jobs:
   - job: list_docker_image 
@@ -36,7 +37,9 @@ stages:
   
     steps:
     - script: 
-        - docker scan "${dockerid}"/"${imageName-3}":"${tag}"
+        - docker pull "${dockerid}"/"${imageTagName-3}":"${tag}"
+        - docker scan "${dockerid}"/"${imageTagName-3}":"${tag}"
+        
 #        cd checkoutservice
 #        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
 #        bash -s -- -f -r $(img-nm-tg-3):$(tag)
