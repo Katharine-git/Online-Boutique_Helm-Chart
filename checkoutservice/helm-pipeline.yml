@@ -20,7 +20,6 @@ stages:
         cd checkoutservice
         docker build -t "${imageName-3}" .
         docker login -u "${dockerid}" -p "${dockerpswd}"
-#       docker tag "${imageName-3}" "${dockerid}"/"${imageTagName-3}":"${tag}"
         docker push "${dockerid}"/"${imageTagName-3}"
 
 - stage: list 
