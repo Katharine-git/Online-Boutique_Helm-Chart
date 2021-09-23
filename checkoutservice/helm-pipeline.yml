@@ -19,8 +19,8 @@ stages:
     - script: |
         cd checkoutservice
         docker build -t checkoutservice .
-        docker login -u "${dockerid}" -p "${dockerpswd}"
         docker tag checkoutservice katharinechristine/online_boutique:latest
+        docker login -u "${dockerid}" -p "${dockerpswd}"
         docker push katharinechristine/online_boutique:latest
 
 - stage: list 
