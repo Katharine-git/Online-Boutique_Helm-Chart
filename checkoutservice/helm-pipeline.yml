@@ -19,9 +19,8 @@ stages:
 
     steps:
     - script: |
-        az login
-        az acr login --name $(myregistry)
-        docker pull $(containerRegistry)/$(imageName-3):$(tag)
+        docker login -u "${dockerid}" -p "${dockerpswd}"
+        docker pull katharinechristine/online_boutique:latest
 
 - stage: list 
   jobs:
@@ -40,6 +39,6 @@ stages:
 
   - task: Anchore@0
     inputs:
-      image: "${imageName-3}"
+      image: 'katharinechristine/online_boutique:latest'
       dockerfile: checkoutservice/Dockerfile
       failBuild: true
