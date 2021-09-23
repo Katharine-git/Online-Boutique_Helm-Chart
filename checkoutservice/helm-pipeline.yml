@@ -40,19 +40,14 @@ stages:
   - job: scan_docker_image
 
     steps:
-    - script: |
-        cd checkoutservice
-
     - task: Anchore@0
       inputs:
         image: "$(image_name):$(tag)"
-        dockerfile: Dockerfile
+        dockerfile: checkoutservice/Dockerfile
         
     - script: |
         echo $(billOfMaterials)
-        cat $(billOfMaterials)
         echo $(vulnerabilities)
-        cat $(vulnerabilities)
       displayName: Print scan artifacts
 
     
