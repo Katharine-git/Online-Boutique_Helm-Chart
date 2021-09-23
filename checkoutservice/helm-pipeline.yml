@@ -38,8 +38,8 @@ stages:
     - script: |
         cd checkoutservice
 
-  - task: Anchore@0
-    inputs:
-      image: "${imageName-3}"
-      dockerfile: checkoutservice/Dockerfile
-      failBuild: true
+    - task: Anchore@0
+      inputs:
+        image: "${imageName-3}"
+        dockerfile: checkoutservice/Dockerfile
+        failBuild: true
