@@ -7,8 +7,8 @@ pool:
 
 variables:
   imageName-3: 'checkoutservice'
-  imageTagName-3: 'checkout'
   tag: 'latest'
+  repo: 'online_boutique'
 
 stages:
 - stage: build_and_push
@@ -20,7 +20,8 @@ stages:
         cd checkoutservice
         docker build -t "${imageName-3}" .
         docker login -u "${dockerid}" -p "${dockerpswd}"
-        docker push "${dockerid}"/"${imageTagName-3}"
+        docker tag "${imageName-3}" "${dockerid}"/"${repo}":"${tag}"
+        docker push "${dockerid}"/"${repo}":"${tag}"
 
 - stage: list 
   jobs:
@@ -37,8 +38,8 @@ stages:
     steps:
 
     - script: |
-        docker pull "${dockerid}"/"${imageTagName-3}"
-        docker scan "${dockerid}"/"${imageTagName-3}"
+        docker pull "${dockerid}"/"${repo}":"${tag}"
+        docker scan "${dockerid}"/"${repo}":"${tag}"
 
 #        cd checkoutservice
 #        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
