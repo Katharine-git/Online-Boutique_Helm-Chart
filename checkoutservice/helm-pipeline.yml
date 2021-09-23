@@ -39,5 +39,6 @@ stages:
         curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 
         bash -s -- -f -r checkoutservice
 
+
     
 
