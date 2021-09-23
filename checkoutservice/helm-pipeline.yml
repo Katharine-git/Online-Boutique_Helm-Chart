@@ -7,6 +7,8 @@ pool:
 
 variables:
   imageName-3: 'checkoutservice'
+  containerRegistry: 'dagile.azurecr.io'
+  myregistry: 'dagile'
   tag: 'latest'
   repo: 'online_boutique'
 
@@ -17,8 +19,9 @@ stages:
 
     steps:
     - script: |
-        cd checkoutservice
-        docker build -t checkoutservice .
+        az login
+        az acr login --name $(myregistry)
+        docker pull $(containerRegistry)/$(imageName-3):$(tag)
 
 - stage: list 
   jobs:
@@ -33,10 +36,17 @@ stages:
   - job: scan_docker_image
   
     steps:
+    - task: CmdLine@2
+      displayName: Scan
+      inputs:
+        script: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageName-3):$(tag)
+         
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageName-3):$(tag)
 
-    - script: |
-        cd checkoutservice
-        docker scan --file Dockerfile checkoutservice
+#    - script: |
+#        cd checkoutservice
+#        docker scan --file Dockerfile checkoutservice
 
 #        cd checkoutservice
 #        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
