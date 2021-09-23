@@ -37,9 +37,9 @@ stages:
     - script: |
         cd checkoutservice
 
-  - task: Anchore@0
-    inputs:
-      image: 'katharinechristine/online_boutique:latest'
-      dockerfile: checkoutservice/Dockerfile
-      failBuild: true
+    - task: Anchore@0
+      inputs:
+        image: 'katharinechristine/online_boutique:latest'
+        dockerfile: checkoutservice/Dockerfile
+        failBuild: true
 
