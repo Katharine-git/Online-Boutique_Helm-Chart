@@ -35,9 +35,13 @@ stages:
   - job: scan_docker_image
     steps:
     - script: |
-        cd checkoutservice
-        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 
-        bash -s -- -f -r checkoutservice
+        apt-get update
+        apt-get install docker-scan-plugin
+        docker scan checkoutservice
+#        cd checkoutservice
+#        docker run -it --rm anchore/grype:v.017 
+#        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 
+#        bash -s -- -f -r checkoutservice
 
 
     
