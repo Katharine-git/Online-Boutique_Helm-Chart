@@ -19,8 +19,8 @@ stages:
 
     steps:
     - script: |
-        docker login -u "${dockerid}" -p "${dockerpswd}"
-        docker pull katharinechristine/online_boutique:latest
+        cd checkoutservice
+        docker build -t checkoutservice .
 
 - stage: list 
   jobs:
@@ -37,7 +37,7 @@ stages:
     - script: |
         cd checkoutservice
         curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0 
-        bash -s -- -f -r katharinechristine/online_boutique:latest
+        bash -s -- -f -r checkoutservice
 
     
 
