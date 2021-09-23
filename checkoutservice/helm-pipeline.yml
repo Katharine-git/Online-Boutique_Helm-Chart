@@ -34,15 +34,10 @@ stages:
 - stage: scan 
   jobs:
   - job: scan_docker_image
+    steps:
+    - script: |
+        cd checkoutservice
 
-#    - script: |
-#        cd checkoutservice
-#        docker scan --file Dockerfile checkoutservice
-
-#        cd checkoutservice
-#        curl -s https://ci-tools.anchore.io/inline_scan-v0.6.0
-#        bash -s -- -f -r $(img-nm-tg-3):$(tag)
-        
   - task: Anchore@0
     inputs:
       image: "${imageName-3}"
