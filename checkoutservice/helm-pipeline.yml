@@ -42,3 +42,4 @@ stages:
       image: 'katharinechristine/online_boutique:latest'
       dockerfile: checkoutservice/Dockerfile
       failBuild: true
+
