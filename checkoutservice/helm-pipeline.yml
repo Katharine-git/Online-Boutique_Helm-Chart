@@ -7,7 +7,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
   
 variables:
-  image_name: "localbuild/checkoutservice"
+  image_name: "checkoutservice"
   tag: "ci"
 
 stages:
@@ -16,14 +16,15 @@ stages:
   - job: build_and_scan
 
     steps:
-#    - script: |
-#        cd checkoutservice
+    - script: |
+        cd checkoutservice
+        /usr/bin/docker build -f /home/vsts/work/1/s/checkoutservice/Dockerfile
         
-    - task: Docker@2
-      inputs:
-        command: build
-        repository: "$(image_name)"
-        tags: "$(tag)"
+#    - task: Docker@2
+#      inputs:
+#        command: build
+#        repository: "$(image_name)"
+#        tags: "$(tag)"
 
     - task: Anchore@0
       inputs:
