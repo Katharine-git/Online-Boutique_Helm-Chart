@@ -7,8 +7,11 @@ pool:
   vmImage: 'Ubuntu 16.04'
   
 variables:
+  myregistry: "dagile"
+  containerRegistry: "dagile.azurecr.io" 
+  imageRepository: "checkoutservice"
   image_name: "checkoutservice"
-  tag: "ci"
+  tag: "latest"
 
 stages:
 - stage: build_and_scan
@@ -17,8 +20,9 @@ stages:
 
     steps:
     - script: |
-        cd checkoutservice
-        /usr/bin/docker build -f /home/vsts/work/1/s/checkoutservice/Dockerfile
+        az login
+        az acr login --name $(myregistry)
+        docker pull $(containerRegistry)/$(imageRepository):$(tag)
         
 #    - task: Docker@2
 #      inputs:
@@ -26,15 +30,14 @@ stages:
 #        repository: "$(image_name)"
 #        tags: "$(tag)"
 
-    - task: Anchore@0
+    - task: CmdLine@2
+      displayName: Scan
       inputs:
-        image: "$(image_name):$(tag)"
-        dockerfile: Dockerfile
+        script: |
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+         
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
         
-    - script: |
-        echo $(billOfMaterials)
-        echo $(vulnerabilities)
-      displayName: Print scan artifacts
-
+    
     
 
