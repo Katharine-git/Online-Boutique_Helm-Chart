@@ -1,32 +1,53 @@
 #Pipeline to depoly helm-chart of the respective MS when the respective image is build
 trigger:
 - master
+- dev
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  myregistry: "dagile"
+  containerRegistry: "dagile.azurecr.io" 
+  imageRepository: "recomm-service"
+  image_name: "recomm-service"
+  tag: "latest"
+  releaseName: "recomm-service"
+  nameSpace: "recomm-service"
 
 stages:
-- stage: build
+- stage: pull
   jobs:
-  - job: Build_Docker_Image
-    pool:
-      vmImage: 'Ubuntu 16.04'
-  
-    variables:
-      imageName-1: 'recommendationservice'
+  - job: pull_image_from_acr
 
     steps:
     - script: |
-        cd recommendationservice
-        docker build -f Dockerfile -t $(imageName-1) .
-        
-- stage: deploy
-  jobs:
-  - job: deploy_helm_chart
-    pool:
-      vmImage: 'Ubuntu 16.04'
-  
-    steps:
-    - script: |
-        cd recommendationservice
         az login
-        az aks get-credentials --resource-group Training-rg --name dagile
-        kubectl create namespace recommendationservice
-        helm install recommendationservice ./helm-chart -n recommendationservice
+        az acr login --name $(myregistry)
+        docker pull $(containerRegistry)/$(imageRepository):$(tag)
+
+- stage: Scan
+  jobs:
+  - job: scan_image
+
+    steps:
+    - task: CmdLine@2
+      displayName: Scan
+      inputs:
+        script: |
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+         
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+
+# - stage: deploy
+#   jobs:
+#   - job: deploy_helm_chart
+  
+#     steps:
+#     - script: |
+#         cd recommendationservice
+#         helm deploy $(releaseName) ./helmchart -n $(nameSpace)
+     
+    
+    
+

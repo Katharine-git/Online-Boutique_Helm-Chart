@@ -1,32 +1,53 @@
 #Pipeline to depoly helm-chart of the respective MS when the respective image is build
 trigger:
 - master
+- dev
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  myregistry: "dagile"
+  containerRegistry: "dagile.azurecr.io" 
+  imageRepository: "payment"
+  image_name: "payment"
+  tag: "latest"
+  releaseName: "payment"
+  nameSpace: "payment"
 
 stages:
-- stage: build
+- stage: pull
   jobs:
-  - job: Build_Docker_Image
-    pool:
-      vmImage: 'Ubuntu 16.04'
-  
-    variables:
-      imageName-1: 'paymentservice'
+  - job: pull_image_from_acr
 
     steps:
     - script: |
-        cd paymentservice
-        docker build -f Dockerfile -t $(imageName-1) .
-        
-- stage: deploy
-  jobs:
-  - job: deploy_helm_chart
-    pool:
-      vmImage: 'Ubuntu 16.04'
-  
-    steps:
-    - script: |
-        cd paymentservice
         az login
-        az aks get-credentials --resource-group Training-rg --name dagile
-        kubectl create namespace paymentservice
-        helm install paymentservice ./helm-chart -n paymentservice
+        az acr login --name $(myregistry)
+        docker pull $(containerRegistry)/$(imageRepository):$(tag)
+
+- stage: Scan
+  jobs:
+  - job: scan_image
+
+    steps:
+    - task: CmdLine@2
+      displayName: Scan
+      inputs:
+        script: |
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+         
+         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+
+# - stage: deploy
+#   jobs:
+#   - job: deploy_helm_chart
+  
+#     steps:
+#     - script: |
+#         cd paymentservice
+#         helm deploy $(releaseName) ./helmchart -n $(nameSpace)
+     
+    
+    
+

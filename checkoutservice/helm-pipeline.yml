@@ -12,11 +12,13 @@ variables:
   imageRepository: "checkoutservice"
   image_name: "checkoutservice"
   tag: "latest"
+  releaseName: "checkoutservice"
+  nameSpace: "checkoutservice"
 
 stages:
-- stage: build_and_scan
+- stage: pull
   jobs:
-  - job: build_and_scan
+  - job: pull_image_from_acr
 
     steps:
     - script: |
@@ -30,6 +32,11 @@ stages:
 #        repository: "$(image_name)"
 #        tags: "$(tag)"
 
+- stage: Scan
+  jobs:
+  - job: scan_image
+
+    steps:
     - task: CmdLine@2
       displayName: Scan
       inputs:
@@ -37,7 +44,16 @@ stages:
          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
          
          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
-        
+
+# - stage: deploy
+#   jobs:
+#   - job: deploy_helm_chart
+  
+#     steps:
+#     - script: |
+#         cd checkoutservice
+#         helm deploy $(releaseName) ./helmchart -n $(nameSpace)
+     
     
     
 
