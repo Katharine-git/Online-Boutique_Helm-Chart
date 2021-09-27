@@ -23,8 +23,11 @@ stages:
     steps:
     - script: |
         az login
-        az acr login --name $(myregistry) 
-        docker pull $(containerRegistry)/$(imageRepository):$(tag)
+        az acr login --name dagile --expose-token
+        TOKEN=$(az acr login --name dagile --expose-token --output tsv --query accessToken)
+        docker login dagile.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password $TOKEN
+#       az acr login --name $(myregistry) 
+#       docker pull $(containerRegistry)/$(imageRepository):$(tag)
         
 #    - task: Docker@2
 #      inputs:
