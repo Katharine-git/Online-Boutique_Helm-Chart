@@ -12,7 +12,7 @@ variables:
   containerRegistry: "dagile.azurecr.io" 
   imageRepository: "checkoutservice"
   image_name: "katharinechristine/online_boutique"
-  tag: "0.1"
+  tag: "latest"
   releaseName: "checkoutservice"
   nameSpace: "checkoutservice"
 
@@ -57,6 +57,7 @@ stages:
       displayName: "Run trivy scan"
       inputs:
         script: |
+            trivy –clear-cache online_boutique:latest
             trivy image --exit-code 0 --severity LOW,MEDIUM $(image_name):$(tag)
             trivy image --exit-code 1 --severity HIGH,CRITICAL $(image_name):$(tag)
 #         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(image_name):$(tag)
