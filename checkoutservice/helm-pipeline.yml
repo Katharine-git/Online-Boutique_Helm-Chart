@@ -37,6 +37,9 @@ stages:
   - job: scan_image
 
     steps:
+    - script: |
+        Connect-AzContainerRegistry -Name $(myregistry)
+        
     - task: CmdLine@2
       displayName: Scan
       inputs:
