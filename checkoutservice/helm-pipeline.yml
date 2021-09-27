@@ -11,7 +11,7 @@ variables:
   myregistry: "dagile"
   containerRegistry: "dagile.azurecr.io" 
   imageRepository: "checkoutservice"
-  image_name: "checkoutservice"
+  image_name: "katharinechristine/online_boutique"
   tag: "0.1"
   releaseName: "checkoutservice"
   nameSpace: "checkoutservice"
