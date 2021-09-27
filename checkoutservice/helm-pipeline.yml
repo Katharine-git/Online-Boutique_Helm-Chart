@@ -22,18 +22,19 @@ stages:
 
     steps:
     - script: |
-        az login
-        az acr login --name dagile --expose-token
-        TOKEN=$(az acr login --name dagile --expose-token --output tsv --query accessToken)
-        docker login dagile.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password $TOKEN
+        cd checkoutservice
+#        az login
+#        az acr login --name dagile --expose-token
+#        TOKEN=$(az acr login --name dagile --expose-token --output tsv --query accessToken)
+#        docker login dagile.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password $TOKEN
 #       az acr login --name $(myregistry) 
 #       docker pull $(containerRegistry)/$(imageRepository):$(tag)
         
-#    - task: Docker@2
-#      inputs:
-#        command: build
-#        repository: "$(image_name)"
-#        tags: "$(tag)"
+    - task: Docker@2
+      inputs:
+        command: build
+        repository: "$(image_name)"
+        tags: "$(tag)"
 
 - stage: Scan
   jobs:
@@ -44,9 +45,9 @@ stages:
       displayName: Scan
       inputs:
         script: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(image_name):$(tag)
          
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(image_name):$(tag)
 
 # - stage: deploy
 #   jobs:
