@@ -23,7 +23,7 @@ stages:
     steps:
     - script: |
         az login
-        az acr login --name $(myregistry)
+        az acr login --name $(myregistry) --expose-token
         docker pull $(containerRegistry)/$(imageRepository):$(tag)
         
 #    - task: Docker@2
@@ -37,22 +37,13 @@ stages:
   - job: scan_image
 
     steps:
-    - script: |
-        sudo apt-get install rpm
-        wget https://github.com/aquasecurity/trivy/releases/download/v$(trivyVersion)/trivy_$(trivyVersion)_Linux-64bit.deb
-        sudo dpkg -i trivy_$(trivyVersion)_Linux-64bit.deb
-        trivy -v
-      displayName: 'Download and install Trivy'
-
     - task: CmdLine@2
       displayName: Scan
       inputs:
         script: |
-         trivy image --exit-code 0 --severity LOW,MEDIUM $(containerRegistry)/$(imageRepository):$(tag)
-         trivy image --exit-code 1 --severity HIGH,CRITICAL $(containerRegistry)/$(imageRepository):$(tag)
-#        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
          
-#        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(containerRegistry)/$(imageRepository):$(tag)
 
 # - stage: deploy
 #   jobs:
