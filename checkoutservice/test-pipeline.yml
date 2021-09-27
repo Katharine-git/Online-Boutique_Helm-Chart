@@ -1,0 +1,89 @@
+#Pipeline to scan docker image using Trivy
+trigger:
+- master
+- dev
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  trivyVersion: 0.9.2
+  tag: 'checkout'
+  image_name: "katharinechristine/online_boutique"
+
+stages:
+- stage: build
+  jobs:
+  - job: build
+
+    steps:
+    - script: |
+        cd checkoutservice
+        docker login -u "${dockerid}" -p "${dockerpswd}"
+#        az login
+#        az acr login --name dagile --expose-token
+#        TOKEN=$(az acr login --name dagile --expose-token --output tsv --query accessToken)
+#        docker login dagile.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password $TOKEN
+#       az acr login --name $(myregistry) 
+#       docker pull $(containerRegistry)/$(imageRepository):$(tag)
+        
+    - task: Docker@2
+      inputs:
+        command: build
+        repository: "$(image_name)"
+        tags: "$(tag)"
+
+- stage: Scan
+  jobs:
+  - job: scan_image
+
+    steps:
+    - task: CmdLine@2
+      displayName: Scan
+      inputs:
+        script: |
+          sudo apt-get install rpm
+          wget https://github.com/aquasecurity/trivy/releases/download/v$(trivyVersion)/trivy_$(trivyVersion)_Linux-64bit.deb
+          sudo dpkg -i trivy_$(trivyVersion)_Linux-64bit.deb
+          trivy -v
+        displayName: 'Download and install Trivy'
+
+    - task: CmdLine@2
+      displayName: "Run trivy scan"
+      inputs:
+        script: |
+            trivy image --exit-code 0 --severity LOW,MEDIUM $(image_name):$(tag)
+            trivy image --exit-code 1 --severity HIGH,CRITICAL $(image_name):$(tag)
+#         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(image_name):$(tag)
+         
+#         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(image_name):$(tag)
+
+# - stage: deploy
+#   jobs:
+#   - job: deploy_helm_chart
+  
+#     steps:
+#     - script: |
+#         cd checkoutservice
+#         helm deploy $(releaseName) ./helmchart -n $(nameSpace)
+     
+    
+    
+
+
+#         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 0 --severity MEDIUM,HIGH --ignore-unfixed $(image_name):$(tag)
+         
+#         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy --exit-code 1 --severity CRITICAL --ignore-unfixed $(image_name):$(tag)
+
+# - stage: deploy
+#   jobs:
+#   - job: deploy_helm_chart
+  
+#     steps:
+#     - script: |
+#         cd checkoutservice
+#         helm deploy $(releaseName) ./helmchart -n $(nameSpace)
+     
+    
+    
+
