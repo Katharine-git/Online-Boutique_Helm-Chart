@@ -34,7 +34,6 @@ stages:
 
     - task: Docker@2
       inputs:
-        containerRegistry: 'Docker hub'
         repository: '$(image_name)'
         command: 'push'
         tags: '$(tag)'
