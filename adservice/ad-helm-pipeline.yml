@@ -8,7 +8,7 @@ pool:
 variables:
   trivyVersion: 0.9.2
   tag: 'azuredevops-$(Build.BuildNumber)'
-  image_name: "katharinechristine/online_boutique"
+  image_name: "adservice"
 
 stages:
 - stage: build
