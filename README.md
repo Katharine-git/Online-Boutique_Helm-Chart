@@ -7,4 +7,9 @@ This application works on any Kubernetes cluster, as well as Google Kubernetes E
 The link to the above said application is given below:
 https://github.com/GoogleCloudPlatform/microservices-demo
 
+Also included pipelines that ;
+1. Build the respective image and push it to the ACR.
+2. Scan the built image using Trivy.
+for each microservice
+
 Happy Helming !!
