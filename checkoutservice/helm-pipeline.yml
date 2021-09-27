@@ -24,6 +24,7 @@ stages:
     steps:
     - script: |
         cd checkoutservice
+        docker login -u "${dockerid}" -p "${dockerpswd}"
 #        az login
 #        az acr login --name dagile --expose-token
 #        TOKEN=$(az acr login --name dagile --expose-token --output tsv --query accessToken)
